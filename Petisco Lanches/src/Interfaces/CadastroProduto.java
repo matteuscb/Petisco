@@ -5,6 +5,16 @@
  */
 package Interfaces;
 
+import DAO.FornecedorDAO;
+import DAO.ProdutoDAO;
+import Modelos.Fornecedor;
+import Modelos.Produto;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -16,6 +26,11 @@ public class CadastroProduto extends javax.swing.JInternalFrame {
     /**
      * Creates new form CadastroProduto
      */
+    ProdutoDAO dao;
+    Produto produto;
+    List<Fornecedor> fornecedores = new ArrayList<>();
+    FornecedorDAO fdao = new FornecedorDAO();
+
     DefaultTableModel tmFornecedor = new DefaultTableModel(null, new String[]{
         "Nome", "CNPJ", "Cidade"}) {
         boolean[] canEdit = new boolean[]{
@@ -50,7 +65,6 @@ public class CadastroProduto extends javax.swing.JInternalFrame {
         jLNome = new javax.swing.JLabel();
         jLQuantidade = new javax.swing.JLabel();
         jLValidade = new javax.swing.JLabel();
-        jDCValidade = new com.toedter.calendar.JDateChooser();
         jTNome = new javax.swing.JTextField();
         jTFornecedor = new javax.swing.JTextField();
         jTQuantidade = new javax.swing.JTextField();
@@ -59,6 +73,7 @@ public class CadastroProduto extends javax.swing.JInternalFrame {
         jBCadastrar = new javax.swing.JButton();
         jBLimpar = new javax.swing.JButton();
         jLCabecalho = new javax.swing.JLabel();
+        jDCValidade = new com.toedter.calendar.JDateChooser();
 
         setClosable(true);
 
@@ -77,16 +92,32 @@ public class CadastroProduto extends javax.swing.JInternalFrame {
         jTNome.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         jTFornecedor.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTFornecedor.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTFornecedorKeyTyped(evt);
+            }
+        });
 
         jTQuantidade.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         jTabela.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jTabela.setModel(tmFornecedor);
+        jTabela.setRowHeight(23);
+        jTabela.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTabelaMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTabela);
 
         jBCadastrar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jBCadastrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/salvar.png"))); // NOI18N
         jBCadastrar.setText("Cadastrar");
+        jBCadastrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBCadastrarActionPerformed(evt);
+            }
+        });
 
         jBLimpar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jBLimpar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/limpar.png"))); // NOI18N
@@ -100,6 +131,8 @@ public class CadastroProduto extends javax.swing.JInternalFrame {
         jLCabecalho.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLCabecalho.setText("Cadastro de Produto");
 
+        jDCValidade.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -108,32 +141,31 @@ public class CadastroProduto extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(22, 22, 22)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jBCadastrar)
-                                .addGap(18, 18, 18)
-                                .addComponent(jBLimpar))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLNome)
+                                    .addComponent(jBCadastrar)
                                     .addGap(18, 18, 18)
-                                    .addComponent(jTNome, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jBLimpar))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLValidade)
+                                        .addComponent(jLNome)
                                         .addGap(18, 18, 18)
-                                        .addComponent(jDCValidade, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLQuantidade)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jTQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(23, 23, 23)))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLFornecedor)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jTFornecedor))
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 546, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                        .addComponent(jTNome, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(jLFornecedor)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(jTFornecedor))
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 546, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLValidade)
+                                .addGap(18, 18, 18)
+                                .addComponent(jDCValidade, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLQuantidade)
+                                .addGap(18, 18, 18)
+                                .addComponent(jTQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(181, 181, 181)
                         .addComponent(jLCabecalho)))
@@ -152,7 +184,7 @@ public class CadastroProduto extends javax.swing.JInternalFrame {
                     .addComponent(jLFornecedor)
                     .addComponent(jTFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -162,7 +194,7 @@ public class CadastroProduto extends javax.swing.JInternalFrame {
                     .addComponent(jLQuantidade)
                     .addComponent(jTQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLValidade)
                     .addComponent(jDCValidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(33, 33, 33)
@@ -183,7 +215,58 @@ public class CadastroProduto extends javax.swing.JInternalFrame {
         while (tmFornecedor.getRowCount() > 0) {
             tmFornecedor.removeRow(0);
         }
+        produto = null;
+        dao = null;
     }//GEN-LAST:event_jBLimparActionPerformed
+
+    private void jBCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBCadastrarActionPerformed
+        Integer quantidade = Integer.parseInt(jTQuantidade.getText());
+        if (quantidade >= 0) {
+            try {
+                produto = new Produto();
+                dao = new ProdutoDAO();
+
+                produto.setNome(jTNome.getText());
+                produto.setQuantidade(quantidade);
+                produto.setFornecedor(fornecedores.get(jTabela.getSelectedRow()));
+                produto.setData(jDCValidade.getDate());
+
+                dao.adicionar(produto);
+                JOptionPane.showMessageDialog(null, "Produto Adicionado com Sucesso!");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Quantidade não pode conter números negativos!");
+        }
+    }//GEN-LAST:event_jBCadastrarActionPerformed
+
+    private void jTFornecedorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFornecedorKeyTyped
+        try {
+            fornecedores = fdao.listar("%" + jTFornecedor.getText() + "%");
+            //"Nome", "CNPJ", "Cidade"}) {
+            while (tmFornecedor.getRowCount() > 0) {
+                tmFornecedor.removeRow(0);
+            }
+
+            String endereco;
+            for (int i = 0; i < fornecedores.size(); i++) {
+                tmFornecedor.addRow(new String[]{null, null, null, null});
+                endereco = fornecedores.get(i).getCidade() + "/"
+                        + fornecedores.get(i).getEstado();
+                tmFornecedor.setValueAt(fornecedores.get(i).getNome(), i, 0);
+                tmFornecedor.setValueAt(fornecedores.get(i).getCnpj(), i, 1);
+                tmFornecedor.setValueAt(endereco, i, 2);
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(CadastroProduto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jTFornecedorKeyTyped
+
+    private void jTabelaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTabelaMouseClicked
+        jTFornecedor.setText(fornecedores.get(jTabela.getSelectedRow()).getNome());
+    }//GEN-LAST:event_jTabelaMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBCadastrar;

@@ -5,6 +5,11 @@
  */
 package Interfaces;
 
+import DAO.ProdutoDAO;
+import Modelos.Produto;
+import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -16,6 +21,9 @@ public class PesquisaProduto extends javax.swing.JInternalFrame {
     /**
      * Creates new form PesquisaProduto
      */
+    ProdutoDAO dao;
+    List<Produto> produtos;
+
     DefaultTableModel tmProduto = new DefaultTableModel(null, new String[]{
         "Nome", "Validade", "Quantidade", "Fornecedor"}) {
         boolean[] canEdit = new boolean[]{
@@ -43,21 +51,27 @@ public class PesquisaProduto extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTNome = new javax.swing.JTextField();
+        jTProduto = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTabela = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTNome1 = new javax.swing.JTextField();
+        jTFornecedor = new javax.swing.JTextField();
 
         setClosable(true);
 
-        jTNome.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTProduto.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTProduto.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTProdutoKeyTyped(evt);
+            }
+        });
 
         jTabela.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jTabela.setModel(tmProduto);
+        jTabela.setRowHeight(23);
         jScrollPane1.setViewportView(jTabela);
 
         jButton1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -78,7 +92,12 @@ public class PesquisaProduto extends javax.swing.JInternalFrame {
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel3.setText("Fornecedor:");
 
-        jTNome1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTFornecedor.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTFornecedor.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTFornecedorKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -98,11 +117,11 @@ public class PesquisaProduto extends javax.swing.JInternalFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addGap(18, 18, 18)
-                                .addComponent(jTNome1))
+                                .addComponent(jTFornecedor))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addGap(18, 18, 18)
-                                .addComponent(jTNome, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jTProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton1)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -115,11 +134,11 @@ public class PesquisaProduto extends javax.swing.JInternalFrame {
                 .addGap(43, 43, 43)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
-                    .addComponent(jTNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTNome1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
@@ -131,11 +150,53 @@ public class PesquisaProduto extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        jTNome.setText("");
+        jTProduto.setText("");
         while (tmProduto.getRowCount() > 0) {
             tmProduto.removeRow(0);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jTProdutoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTProdutoKeyTyped
+        try {
+            dao = new ProdutoDAO();
+            produtos = dao.listarProduto("%" + jTProduto.getText() + "%");
+
+            while (tmProduto.getRowCount() > 0) {
+                tmProduto.removeRow(0);
+            }
+
+            for (int i = 0; i < produtos.size(); i++) {
+                tmProduto.addRow(new String[]{null, null, null, null});
+                tmProduto.setValueAt(produtos.get(i).getNome(), i, 0);
+                tmProduto.setValueAt(formatData(produtos.get(i).getData()), i, 1);
+                tmProduto.setValueAt(produtos.get(i).getQuantidade(), i, 2);
+                tmProduto.setValueAt(produtos.get(i).getFornecedor().getNome(), i, 3);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_jTProdutoKeyTyped
+
+    private void jTFornecedorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFornecedorKeyTyped
+        try {
+            dao = new ProdutoDAO();
+            produtos = dao.listarFornecedor("%" + jTFornecedor.getText() + "%");
+
+            while (tmProduto.getRowCount() > 0) {
+                tmProduto.removeRow(0);
+            }
+
+            for (int i = 0; i < produtos.size(); i++) {
+                tmProduto.addRow(new String[]{null, null, null, null});
+                tmProduto.setValueAt(produtos.get(i).getNome(), i, 0);
+                tmProduto.setValueAt(formatData(produtos.get(i).getData()), i, 1);
+                tmProduto.setValueAt(produtos.get(i).getQuantidade(), i, 2);
+                tmProduto.setValueAt(produtos.get(i).getFornecedor().getNome(), i, 3);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_jTFornecedorKeyTyped
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -143,8 +204,29 @@ public class PesquisaProduto extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTNome;
-    private javax.swing.JTextField jTNome1;
+    private javax.swing.JTextField jTFornecedor;
+    private javax.swing.JTextField jTProduto;
     private javax.swing.JTable jTabela;
     // End of variables declaration//GEN-END:variables
+
+    public static String formatData(java.util.Date d) {
+        String aux, aux2 = "";
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(d);
+        int ano = cal.get(Calendar.YEAR);
+        int mes = cal.get(Calendar.MONTH) + 1;
+        int dia = cal.get(Calendar.DAY_OF_MONTH);
+        if (mes < 10) {
+            aux = "0" + String.valueOf(mes);
+        } else {
+            aux = String.valueOf(mes);
+        }
+        if (dia < 10) {
+            aux2 = "0" + String.valueOf(dia);
+        } else {
+            aux2 = String.valueOf(dia);
+        }
+        String sData = aux2 + "/" + aux + "/" + String.valueOf(ano);
+        return sData;
+    }
 }

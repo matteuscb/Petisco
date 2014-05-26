@@ -5,6 +5,8 @@
  */
 package Modelos;
 
+import java.util.Date;
+
 /**
  *
  * @author matteus
@@ -18,6 +20,15 @@ public class Produto {
     private Integer quantidade;
     private String Nome;
     private Fornecedor fornecedor;
+    private Date data;
+
+    public Date getData() {
+        return data;
+    }
+
+    public void setData(Date data) {
+        this.data = data;
+    }
 
     public Integer getId() {
         return id;
