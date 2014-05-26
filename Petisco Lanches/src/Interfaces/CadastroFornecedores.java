@@ -9,8 +9,6 @@ import DAO.FornecedorDAO;
 import Modelos.Fornecedor;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.text.MaskFormatter;
 
@@ -253,6 +251,8 @@ public class CadastroFornecedores extends javax.swing.JInternalFrame {
         jTBairro.setText("");
         jTCidade.setText("");
         jCBEstado.setSelectedIndex(0);
+        fornecedor = null;
+        dao = null;
     }//GEN-LAST:event_jBLimparActionPerformed
 
     private void jBCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBCadastrarActionPerformed
@@ -272,7 +272,7 @@ public class CadastroFornecedores extends javax.swing.JInternalFrame {
             dao.adicionar(fornecedor);
             JOptionPane.showMessageDialog(null, "Fornecedor Adicionado com Sucesso!");
         } catch (SQLException ex) {
-            Logger.getLogger(CadastroFornecedores.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Erro: " + ex);
         }
     }//GEN-LAST:event_jBCadastrarActionPerformed
 

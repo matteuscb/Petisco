@@ -23,7 +23,7 @@ public class PesquisaFornecedores extends javax.swing.JInternalFrame {
     /**
      * Creates new form PesquisaFornecedores
      */
-    FornecedorDAO dao;
+    FornecedorDAO dao = new FornecedorDAO();
     List<Fornecedor> fornecedores;
 
     DefaultTableModel tmFornecedor = new DefaultTableModel(null, new String[]{
@@ -178,12 +178,11 @@ public class PesquisaFornecedores extends javax.swing.JInternalFrame {
             tmFornecedor.removeRow(0);
         }
         fornecedores = null;
-        dao = null;
+        dao = new FornecedorDAO();
     }//GEN-LAST:event_jBLimparActionPerformed
 
     private void jTNomeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTNomeKeyTyped
         try {
-            dao = new FornecedorDAO();
             fornecedores = dao.listar("%" + jTNome.getText() + "%");
             while (tmFornecedor.getRowCount() > 0) {
                 tmFornecedor.removeRow(0);
@@ -206,7 +205,7 @@ public class PesquisaFornecedores extends javax.swing.JInternalFrame {
             }
 
         } catch (SQLException ex) {
-
+            JOptionPane.showMessageDialog(null, "Erro: " + ex);
         }
     }//GEN-LAST:event_jTNomeKeyTyped
 
@@ -234,7 +233,7 @@ public class PesquisaFornecedores extends javax.swing.JInternalFrame {
             }
 
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro: " + ex);
         }
     }//GEN-LAST:event_jBPesquisarActionPerformed
 
@@ -247,7 +246,7 @@ public class PesquisaFornecedores extends javax.swing.JInternalFrame {
                     dao.remover(fornecedores.get(jTabela.getSelectedRow()).getId());
                     JOptionPane.showMessageDialog(null, "Fornecedor deletada com sucesso.");
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Erro: " + ex);
                 }
             } else if (pergunta == 1) {//clicou em nao
             }

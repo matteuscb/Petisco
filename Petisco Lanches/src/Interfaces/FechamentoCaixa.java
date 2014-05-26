@@ -9,8 +9,6 @@ import DAO.PedidoDAO;
 import Modelos.Pedido;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -131,7 +129,7 @@ public class FechamentoCaixa extends javax.swing.JInternalFrame {
                     tmPedido.removeRow(0);
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(FechamentoCaixa.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, "Erro: " + ex);
             }
         } else if (pergunta == 1) {//clicou em nao
         }
@@ -148,11 +146,10 @@ public class FechamentoCaixa extends javax.swing.JInternalFrame {
     private void populateFields() throws SQLException {
         dao = new PedidoDAO();
         pedidos = dao.listar();
-        Double total = .0;
         while (tmPedido.getRowCount() > 0) {
             tmPedido.removeRow(0);
         }
-
+        Double total = .0;
         for (int i = 0; i < pedidos.size(); i++) {
             total += pedidos.get(i).getValor();
             tmPedido.addRow(new String[]{null, null, null, null});

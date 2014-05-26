@@ -5,6 +5,11 @@
  */
 package Interfaces;
 
+import DAO.PedidoDAO;
+import Modelos.Pedido;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author matteus
@@ -14,6 +19,9 @@ public class CadastroPedidos extends javax.swing.JInternalFrame {
     /**
      * Creates new form CadastroPedidos
      */
+    Pedido pedido;
+    PedidoDAO dao;
+
     public CadastroPedidos() {
         super("Cadastro de Pedidos");
         initComponents();
@@ -39,7 +47,7 @@ public class CadastroPedidos extends javax.swing.JInternalFrame {
         jLNumero = new javax.swing.JLabel();
         jLBairro = new javax.swing.JLabel();
         jLRua = new javax.swing.JLabel();
-        jFTValor = new javax.swing.JFormattedTextField();
+        jTValor = new javax.swing.JFormattedTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTAPedido = new javax.swing.JTextArea();
         jBLimpar = new javax.swing.JButton();
@@ -76,7 +84,12 @@ public class CadastroPedidos extends javax.swing.JInternalFrame {
         jLRua.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLRua.setText("Rua:");
 
-        jFTValor.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTValor.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTValor.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTValorKeyTyped(evt);
+            }
+        });
 
         jTAPedido.setColumns(20);
         jTAPedido.setRows(5);
@@ -94,6 +107,11 @@ public class CadastroPedidos extends javax.swing.JInternalFrame {
         jBCadastrar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jBCadastrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/salvar.png"))); // NOI18N
         jBCadastrar.setText("Cadastrar");
+        jBCadastrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBCadastrarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -126,7 +144,7 @@ public class CadastroPedidos extends javax.swing.JInternalFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(jLValor)
                                 .addGap(18, 18, 18)
-                                .addComponent(jFTValor, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jTValor, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -154,7 +172,7 @@ public class CadastroPedidos extends javax.swing.JInternalFrame {
                     .addComponent(jTCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLPedido)
                     .addComponent(jLValor)
-                    .addComponent(jFTValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -180,17 +198,42 @@ public class CadastroPedidos extends javax.swing.JInternalFrame {
 
     private void jBLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBLimparActionPerformed
         jTCliente.setText("");
-        jFTValor.setText("");
+        jTValor.setText("");
         jTRua.setText("");
         jTNumero.setText("");
         jTBairro.setText("");
         jTAPedido.setText("");
+        pedido = null;
+        dao = null;
     }//GEN-LAST:event_jBLimparActionPerformed
+
+    private void jBCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBCadastrarActionPerformed
+        try {
+            pedido = new Pedido();
+            dao = new PedidoDAO();
+
+            pedido.setCliente(jTCliente.getText());
+            pedido.setEndereco(jTRua.getText() + ", " + jTNumero.getText() + " - " + jTBairro.getText());
+            pedido.setPedido(jTAPedido.getText());
+            pedido.setValor(Double.parseDouble(jTValor.getText().replace(',', '.')));
+            dao.adicionar(pedido);
+            JOptionPane.showMessageDialog(null, "Pedido Adicionado com Sucesso!");
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Erro: " + ex);
+        }
+    }//GEN-LAST:event_jBCadastrarActionPerformed
+
+    private void jTValorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTValorKeyTyped
+        String caracteres = "0987654321.,";
+        if (!caracteres.contains(evt.getKeyChar() + "")) {
+            evt.consume();
+        }
+
+    }//GEN-LAST:event_jTValorKeyTyped
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBCadastrar;
     private javax.swing.JButton jBLimpar;
-    private javax.swing.JFormattedTextField jFTValor;
     private javax.swing.JLabel jLBairro;
     private javax.swing.JLabel jLCliente;
     private javax.swing.JLabel jLNumero;
@@ -204,5 +247,6 @@ public class CadastroPedidos extends javax.swing.JInternalFrame {
     private javax.swing.JTextField jTCliente;
     private javax.swing.JTextField jTNumero;
     private javax.swing.JTextField jTRua;
+    private javax.swing.JFormattedTextField jTValor;
     // End of variables declaration//GEN-END:variables
 }

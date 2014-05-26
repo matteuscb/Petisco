@@ -9,8 +9,7 @@ import java.awt.Toolkit;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -222,7 +221,7 @@ public class Principal extends javax.swing.JFrame {
             jPanel.add(cf);
             cf.setVisible(true);
         } catch (ParseException ex) {
-            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Erro: " + ex);
         }
     }//GEN-LAST:event_jMICadastrarFornecedorActionPerformed
 
@@ -232,7 +231,7 @@ public class Principal extends javax.swing.JFrame {
             jPanel.add(pf);
             pf.setVisible(true);
         } catch (ParseException ex) {
-            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Erro: " + ex);
         }
     }//GEN-LAST:event_jMIPesquisarFornecedorActionPerformed
 
@@ -276,7 +275,7 @@ public class Principal extends javax.swing.JFrame {
         try {
             Runtime.getRuntime().exec("C:\\Windows\\System32\\calc.exe");
         } catch (IOException e) {
-
+            JOptionPane.showMessageDialog(null, "Erro: " + e);
         }
     }//GEN-LAST:event_jMICalculadoraActionPerformed
 
@@ -286,7 +285,7 @@ public class Principal extends javax.swing.JFrame {
             jPanel.add(fc);
             fc.setVisible(true);
         } catch (SQLException ex) {
-            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Erro: " + ex);
         }
     }//GEN-LAST:event_JMIFechamentoActionPerformed
 
@@ -306,14 +305,8 @@ public class Principal extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            JOptionPane.showMessageDialog(null, "Erro: " + ex);
         }
         //</editor-fold>
 

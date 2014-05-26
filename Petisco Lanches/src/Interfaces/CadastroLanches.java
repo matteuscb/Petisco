@@ -5,6 +5,11 @@
  */
 package Interfaces;
 
+import DAO.LancheDAO;
+import Modelos.Lanche;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author matteus
@@ -14,6 +19,9 @@ public class CadastroLanches extends javax.swing.JInternalFrame {
     /**
      * Creates new form CadastroLanches
      */
+    Lanche lanche;
+    LancheDAO dao;
+
     public CadastroLanches() {
         super("Cadastro de Lanches");
         initComponents();
@@ -57,6 +65,11 @@ public class CadastroLanches extends javax.swing.JInternalFrame {
         jTIngredientes.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         jTValor.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTValor.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTValorKeyTyped(evt);
+            }
+        });
 
         jBLimpar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jBLimpar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/limpar.png"))); // NOI18N
@@ -70,6 +83,11 @@ public class CadastroLanches extends javax.swing.JInternalFrame {
         jBCadastrar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jBCadastrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/salvar.png"))); // NOI18N
         jBCadastrar.setText("Cadastrar");
+        jBCadastrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBCadastrarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -134,7 +152,30 @@ public class CadastroLanches extends javax.swing.JInternalFrame {
         jTNome.setText("");
         jTIngredientes.setText("");
         jTValor.setText("");
+        lanche = null;
+        dao = null;
     }//GEN-LAST:event_jBLimparActionPerformed
+
+    private void jBCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBCadastrarActionPerformed
+        try {
+            lanche = new Lanche();
+            dao = new LancheDAO();
+            lanche.setNome(jTNome.getText());
+            lanche.setIngredientes(jTIngredientes.getText());
+            lanche.setValor(Double.parseDouble(jTValor.getText().replace(',', '.')));
+            dao.adicionar(lanche);
+            JOptionPane.showMessageDialog(null, "Lanche Adicionado com Sucesso!");
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Erro: " + ex);
+        }
+    }//GEN-LAST:event_jBCadastrarActionPerformed
+
+    private void jTValorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTValorKeyTyped
+        String caracteres = "0987654321.,";
+        if (!caracteres.contains(evt.getKeyChar() + "")) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jTValorKeyTyped
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBCadastrar;

@@ -10,6 +10,7 @@ import Modelos.Produto;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -21,7 +22,7 @@ public class PesquisaProduto extends javax.swing.JInternalFrame {
     /**
      * Creates new form PesquisaProduto
      */
-    ProdutoDAO dao;
+    ProdutoDAO dao = new ProdutoDAO();
     List<Produto> produtos;
 
     DefaultTableModel tmProduto = new DefaultTableModel(null, new String[]{
@@ -151,14 +152,16 @@ public class PesquisaProduto extends javax.swing.JInternalFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         jTProduto.setText("");
+        jTFornecedor.setText("");
         while (tmProduto.getRowCount() > 0) {
             tmProduto.removeRow(0);
         }
+        dao = new ProdutoDAO();
+        produtos = null;
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTProdutoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTProdutoKeyTyped
         try {
-            dao = new ProdutoDAO();
             produtos = dao.listarProduto("%" + jTProduto.getText() + "%");
 
             while (tmProduto.getRowCount() > 0) {
@@ -173,13 +176,12 @@ public class PesquisaProduto extends javax.swing.JInternalFrame {
                 tmProduto.setValueAt(produtos.get(i).getFornecedor().getNome(), i, 3);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro: " + ex);
         }
     }//GEN-LAST:event_jTProdutoKeyTyped
 
     private void jTFornecedorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFornecedorKeyTyped
         try {
-            dao = new ProdutoDAO();
             produtos = dao.listarFornecedor("%" + jTFornecedor.getText() + "%");
 
             while (tmProduto.getRowCount() > 0) {
@@ -194,7 +196,7 @@ public class PesquisaProduto extends javax.swing.JInternalFrame {
                 tmProduto.setValueAt(produtos.get(i).getFornecedor().getNome(), i, 3);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro: " + ex);
         }
     }//GEN-LAST:event_jTFornecedorKeyTyped
 

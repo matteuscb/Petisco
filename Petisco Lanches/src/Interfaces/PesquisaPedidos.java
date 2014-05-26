@@ -5,6 +5,12 @@
  */
 package Interfaces;
 
+import DAO.PedidoDAO;
+import static Interfaces.FechamentoCaixa.format;
+import Modelos.Pedido;
+import java.sql.SQLException;
+import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -16,6 +22,9 @@ public class PesquisaPedidos extends javax.swing.JInternalFrame {
     /**
      * Creates new form PesquisaPedidos
      */
+    PedidoDAO dao = new PedidoDAO();
+    List<Pedido> pedidos;
+
     DefaultTableModel tmPedido = new DefaultTableModel(null, new String[]{
         "Cliente", "Valor", "Pedido", "Endereço"}) {
         boolean[] canEdit = new boolean[]{
@@ -63,9 +72,15 @@ public class PesquisaPedidos extends javax.swing.JInternalFrame {
         jLNome.setText("Cliente:");
 
         jTNome.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTNome.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTNomeKeyTyped(evt);
+            }
+        });
 
         jTabela.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jTabela.setModel(tmPedido);
+        jTabela.setRowHeight(23);
         jScrollPane1.setViewportView(jTabela);
 
         jBLimpar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -122,7 +137,29 @@ public class PesquisaPedidos extends javax.swing.JInternalFrame {
         while (tmPedido.getRowCount() > 0) {
             tmPedido.removeRow(0);
         }
+        pedidos = null;
+        dao = new PedidoDAO();
     }//GEN-LAST:event_jBLimparActionPerformed
+
+    private void jTNomeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTNomeKeyTyped
+        try {
+            pedidos = dao.listarTudo("%" + jTNome.getText() + "%");
+            while (tmPedido.getRowCount() > 0) {
+                tmPedido.removeRow(0);
+            }
+
+            for (int i = 0; i < pedidos.size(); i++) {
+                tmPedido.addRow(new String[]{null, null, null, null});
+                tmPedido.setValueAt(pedidos.get(i).getCliente(), i, 0);
+                tmPedido.setValueAt(format(pedidos.get(i).getValor()), i, 1);
+                tmPedido.setValueAt(pedidos.get(i).getPedido(), i, 2);
+                tmPedido.setValueAt(pedidos.get(i).getEndereco(), i, 3);
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Erro: " + ex);
+        }
+
+    }//GEN-LAST:event_jTNomeKeyTyped
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBLimpar;

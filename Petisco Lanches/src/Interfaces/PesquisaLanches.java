@@ -5,6 +5,11 @@
  */
 package Interfaces;
 
+import DAO.LancheDAO;
+import Modelos.Lanche;
+import java.sql.SQLException;
+import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -16,6 +21,8 @@ public class PesquisaLanches extends javax.swing.JInternalFrame {
     /**
      * Creates new form PesquisaLanches
      */
+    LancheDAO dao = new LancheDAO();
+    List<Lanche> lanches;
     DefaultTableModel tmLanche = new DefaultTableModel(null, new String[]{
         "Nome", "Ingredientes", "Valor"}) {
         boolean[] canEdit = new boolean[]{
@@ -71,6 +78,11 @@ public class PesquisaLanches extends javax.swing.JInternalFrame {
         jLNome.setText("Nome:");
 
         jTNome.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTNome.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTNomeKeyTyped(evt);
+            }
+        });
 
         jTabela.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jTabela.setModel(tmLanche);
@@ -123,7 +135,28 @@ public class PesquisaLanches extends javax.swing.JInternalFrame {
         while (tmLanche.getRowCount() > 0) {
             tmLanche.removeRow(0);
         }
+        dao = new LancheDAO();
+        lanches = null;
     }//GEN-LAST:event_jBLimparActionPerformed
+
+    private void jTNomeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTNomeKeyTyped
+        try {
+            lanches = dao.listar("%" + jTNome.getText() + "%");
+            while (tmLanche.getRowCount() > 0) {
+                tmLanche.removeRow(0);
+            }
+
+            for (int i = 0; i < lanches.size(); i++) {
+                tmLanche.addRow(new String[]{null, null, null, null});
+                tmLanche.setValueAt(lanches.get(i).getNome(), i, 0);
+                tmLanche.setValueAt(lanches.get(i).getIngredientes(), i, 1);
+                tmLanche.setValueAt(format(lanches.get(i).getValor()), i, 2);
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Erro: " + ex);
+        }
+    }//GEN-LAST:event_jTNomeKeyTyped
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBLimpar;
@@ -133,4 +166,7 @@ public class PesquisaLanches extends javax.swing.JInternalFrame {
     private javax.swing.JTextField jTNome;
     private javax.swing.JTable jTabela;
     // End of variables declaration//GEN-END:variables
+    public static String format(double x) {
+        return String.format("R$ %.2f", x);
+    }
 }
